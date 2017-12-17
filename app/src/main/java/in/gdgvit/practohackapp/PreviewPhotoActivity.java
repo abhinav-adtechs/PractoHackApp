@@ -1,6 +1,7 @@
 package in.gdgvit.practohackapp;
 
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -16,7 +17,7 @@ import android.widget.Toast;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.android.volley.error.VolleyError;
 import com.android.volley.request.SimpleMultiPartRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -38,11 +39,15 @@ public class PreviewPhotoActivity extends AppCompatActivity implements View.OnCl
 
     private Button btnUpload;
 
+    private PreviewPhotoActivity previewPhotoActivity ;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_preview_photo);
+
+        previewPhotoActivity = this ;
 
         if (getIntent().hasExtra("fileName")){
             fileName = getIntent().getExtras().getString("fileName", "no file") ;
@@ -173,11 +178,17 @@ public class PreviewPhotoActivity extends AppCompatActivity implements View.OnCl
                     @Override
                     public void onResponse(String response) {
                         Log.d("Response", response);
+
+
                         try {
                             JSONObject jObj = new JSONObject(response);
                             String message = jObj.getString("message");
 
                             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+
+                            Intent intent = new Intent(previewPhotoActivity, ResultActivity.class) ;
+                            intent.putExtra("response", response) ;
+                            startActivity(intent);
 
                         } catch (JSONException e) {
                             // JSON error
